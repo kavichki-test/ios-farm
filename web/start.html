@@ -1,0 +1,183 @@
+<html>
+<head>
+<style>
+    body {
+      background-color: ="#000000";
+      margin: 0;
+      overflow: hidden;
+    }
+
+    img {
+      display: block;
+      margin: auto;
+    }
+
+    .outer {
+      text-align: center;
+      width: 100%;
+    }
+
+    .outer:before {
+    	content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+    }
+
+    .inner {
+      	display: inline-block;
+  		vertical-align: middle;
+    }
+
+    .cover {
+    	min-height: 250px;
+    }
+
+    .device {
+    	cursor: pointer;
+  		text-align: center;
+  		float: left;
+  		width: 250px;
+    }
+
+    .name {
+    	margin-top: 10px;
+  		font-size: 1.2em;
+    }
+
+    div.busy img {
+    	-webkit-filter: grayscale(100%);
+		filter: grayscale(100%);
+    }
+
+    div.busy div.name {
+    	color: #CF5C36;
+    }
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="js/reconnecting-websocket.js"></script>
+  <script type="text/javascript">
+  		var socket = null;
+
+  		function getRandomInt(min, max) {
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
+
+		function RunSocket() {
+	      if ("WebSocket" in window) {
+	      	id = getRandomInt(10000, 99999);
+			socket = new WebSocket("ws://localhost:9030/:" + id + '/landingpage');
+
+			socket.onmessage = function (evt) {
+				let data = JSON.parse(evt.data);
+				console.log(data);
+				switch (data["action"]) {
+					case 'open':
+						window.open(data["url"]);
+						break;
+					case 'busy':
+						$('div.device[udid="' + data['udid'] + '"] img').css({
+							'-webkit-filter': 'grayscale(100%)',
+  							'filter': 'grayscale(100%)'
+						});
+						$('div.device[udid="' + data['udid'] + '"] div.name').css({
+							'color': '#CF5C36'
+						});
+
+						break;
+					case 'free':
+						$('div.device[udid="' + data['udid'] + '"]').removeClass('busy');
+						break;
+					case 'deviceslist':
+						let devices = data["data"];
+						let html = "";
+						console.log(devices);
+						if (devices.length == 0) {
+							html = "<div class='nodevice'>Нет подключенных устройств</div>";
+						}else {
+							devices.forEach(function(device) {
+								let id = device["name"].toLowerCase().split(' ').join('');
+								let name = device["name"];
+								let udid = device["udid"];
+								let status = device["status"];
+
+								html += '<div id="' + id + '" class="device ' + status + '" udid="' + udid + '"><div class="cover"><img src="img/' + id + '.svg.png" width="150px"></div><div class="name">' + name + '</div></div>';
+							});
+						}
+
+						$('div.inner').html(html);
+						break;
+				}
+			};
+
+			socket.onerror = function(event) {
+				console.log(event);
+				let html = "<div class='error'>Сервер не отвечает</div>";
+				$('div.inner').html(html);
+			}
+	         
+	      } else {
+	         alert("WebSocket NOT supported by your Browser!");
+	      }
+	   }
+
+	   function run(device, udid, name) {
+	   		let action = 'run';
+	   		// add your iOS devices here
+	   		// only english allowed in device name
+	   		console.log(device);
+	   		switch (device) {
+	   			case 'iphone6s':
+	   				socket.send(JSON.stringify({'whoyouare': 'landingpage', 'action': action, 'device': device, 'udid': udid, 'name': name}));
+	   				break;
+	   			case 'iphonexsmax':
+	   				socket.send(JSON.stringify({'whoyouare': 'landingpage', 'action': action, 'device': device, 'udid': udid, 'name': name}));
+	   				break;
+	   			case 'ipadalex':
+	   				socket.send(JSON.stringify({'whoyouare': 'landingpage', 'action': action, 'device': device, 'udid': udid, 'name': name}));
+	   				break;
+	   			case 'iphonese':
+	   				socket.send(JSON.stringify({'whoyouare': 'landingpage', 'action': action, 'device': device, 'udid': udid, 'name': name}));
+	   				break;
+	   		}
+	   }
+	</script>
+</head>
+
+<body onload="RunSocket();">
+	<div class="outer">
+		<div class="inner">
+			<div id="iphonexsmax" class="device">
+				<div class="cover"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/IPhone_XS_Max_Silver.svg/256px-IPhone_XS_Max_Silver.svg.png" width="150px"></div>
+				<div class="name">iPhone XS Max</div>
+			</div>
+			<div id="iphone11promax" class="device">
+				<div class="cover"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/IPhone_11_Pro_Max_Midnight_Green.svg/596px-IPhone_11_Pro_Max_Midnight_Green.svg.png" width="150px"></div>
+				<div class="name">iPhone 11 Pro Max</div>
+			</div>
+			<div id="iphonex" class="device">
+				<div class="cover"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/IPhone_X_vector.svg/256px-IPhone_X_vector.svg.png" width="150px"></div>
+				<div class="name">iPhone X</div>
+			</div>
+			<div id="iphone6s" class="device" udid="27e653fc6590b020cd59860bd798f99ca1f0706b">
+				<div class="cover"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/IPhone_6s_vector.svg/256px-IPhone_6s_vector.svg.png" width='150px'></div>
+				<div class="name">iPhone 6S</div>
+			</div>
+			<div id="iphone5s" class="device">
+				<div class="cover"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/IPhone_5s.png/256px-IPhone_5s.png" width='150px'></div>
+				<div class="name">iPhone 5S</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$('div.inner').on('click', "div.device", function() {
+			if (!$(this).is('.unclickable')) {
+	   			run($(this).attr('id'), $(this).attr('udid'), $(this).find('div.name').text());
+	   		}
+	   });
+	</script>
+	<a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>
+</body>
+</html>

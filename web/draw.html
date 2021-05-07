@@ -1,0 +1,137 @@
+<script src='../js/jquery.min.js'></script>
+<script>
+    var img = $('img#image'),
+        fake = document.createElement('img'),
+        canvas = document.getElementById('canvasPic'),
+        context = canvas.getContext("2d"),
+        paint = false,
+        pic_real_width = 0,
+        pic_real_height = 0;
+
+    var clickX = new Array();
+    var clickY = new Array();
+    var clickDrag = new Array();
+    var paint;
+
+    var colors = {
+                    "white" : "#fff",
+                    "black" : "#000",
+                    "green" : "#659b41",
+                    "yellow": "#ffcf33",
+                    "red"   : "#ff0000"
+                };
+
+    var sizes = {
+                    "small" : 2, 
+                    "medium": 5, 
+                    "big"   : 8, 
+                    "huge"  : 15
+                };
+
+    var curColor = colors["red"];
+    var curSize = sizes["medium"];
+    var clickColor = new Array();
+    var clickSize = new Array();
+
+    $('body').on('load', 'img#image', function() {
+        console.log($(img).width());
+        canvas.setAttribute('width', $(this).width());
+        canvas.setAttribute('height', $(this).height);
+        context.drawImage(fake, 0, 0, $(this).width(), $(this).height);
+        fake.src = $(this).attr('src');
+    });
+
+
+    $('#canvasPic').mousedown(function(e){
+        var mouseX = e.pageX - this.offsetLeft;
+        var mouseY = e.pageY - this.offsetTop;
+            
+        paint = true;
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        redraw();
+    });
+
+    $('#canvasPic').mousemove(function(e){
+        if(paint){
+            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+            redraw();
+        }
+    });
+
+    $('#canvasPic').mouseup(function(e){
+        paint = false;
+    });
+
+    $('#canvasPic').mouseleave(function(e){
+        paint = false;
+    });
+
+    $('#clear').on('click', function() {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+        context.drawImage(fake, 0, 0, img.width(), img.height());
+        clickX.length = 0;
+        clickY.length = 0;
+        clickDrag.length = 0;
+        clickColor.length = 0;
+        clickSize.length = 0;
+    });
+
+    $('p.colors button').click(function(element) {
+        console.log(element);
+        let color = $(element.currentTarget).attr('id');
+
+        $('p.colors button').removeClass('active');
+        $(element.currentTarget).addClass('active');
+
+        curColor = colors[color];
+    });
+
+    $('p.sizes button').click(function(element) {
+        console.log(element);
+        let size = $(element.currentTarget).attr('id');
+
+        $('p.sizes button').removeClass('active');
+        $(element.currentTarget).addClass('active');
+
+        curSize = sizes[size];
+    });
+
+    $('#send').click(function() {
+        sendData(canvas.toDataURL('png'));
+    });
+
+    function addClick(x, y, dragging)
+    {
+        clickX.push(x);
+        clickY.push(y);
+        clickDrag.push(dragging);
+        clickColor.push(curColor);
+        clickSize.push(curSize);
+    }
+
+    function redraw(){
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+        context.drawImage(fake, 0, 0, img.width(), img.height());
+        context.lineJoin = "round";
+                
+        for(var i=0; i < clickX.length; i++) {        
+            context.beginPath();
+            if(clickDrag[i] && i){
+                context.moveTo(clickX[i-1], clickY[i-1]);
+             }else{
+                context.moveTo(clickX[i]-1, clickY[i]);
+             }
+             context.lineTo(clickX[i], clickY[i]);
+             context.closePath();
+             context.strokeStyle = clickColor[i];
+             context.lineWidth = clickSize[i];
+             context.stroke();
+        }
+    }
+
+    function sendData(data){
+        // optional setting
+        // here you can configure sending screenshots to your server
+    }
+    
+</script>

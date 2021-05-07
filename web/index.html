@@ -1,0 +1,418 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    body {
+      background-color: ="#000000";
+      margin: 0;
+      height:100vh;
+      overflow: hidden;
+    }
+
+    .outer {
+      width: 100%;
+      height: 100vh;
+      line-height: 100vh;
+      z-index: 100;
+    }
+
+    .cover {
+      display: flex;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .tools {
+      width: 300px;
+      /*position: absolute;*/
+      top: 50%;
+    }
+
+    .device {
+      /*margin-right: 20%;*/
+    }
+
+    img {
+      /*display: block;*/
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 840px;
+      max-height: 100%;
+      vertical-align: middle;
+      border-top: 20px solid #279AF1;
+      border-bottom: 20px solid #279AF1;
+      border-right: 5px solid #279AF1;
+      border-left: 5px solid #279AF1;
+      /*padding: 10px;
+      background-color: #279AF1;*/
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    button:focus {
+      outline:0;
+    }
+
+    button {
+      margin: 15px;
+    }
+
+    #rotate {
+      background: url('img/rotate.png') no-repeat;
+      border: none;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background-size: cover;
+    }
+
+    #home {
+      background: url('img/home.svg') no-repeat;
+      border: none;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background-size: cover;
+    }
+
+    #screenshot {
+      background: url('img/takescreenshot.svg') no-repeat;
+      border: none;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background-size: cover;
+    }
+    
+    #exit {
+      background: url('img/exit.png') no-repeat;
+      border: none;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      background-size: cover;
+      -webkit-filter: invert(70%) grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(400%) contrast(2);
+      /*filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);*/
+    }
+
+
+    /* Preloader style */
+    .boxes {
+      --size: 32px;
+      --duration: 800ms;
+      height: calc(var(--size) * 2);
+      width: calc(var(--size) * 3);
+      position: relative;
+      -webkit-transform-style: preserve-3d;
+              transform-style: preserve-3d;
+      -webkit-transform-origin: 50% 50%;
+              transform-origin: 50% 50%;
+      margin-top: calc(var(--size) * 1.5 * -1);
+      -webkit-transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
+              transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
+    }
+    .boxes .box {
+      width: var(--size);
+      height: var(--size);
+      top: 0;
+      left: 0;
+      position: absolute;
+      -webkit-transform-style: preserve-3d;
+              transform-style: preserve-3d;
+    }
+    .boxes .box:nth-child(1) {
+      -webkit-transform: translate(100%, 0);
+              transform: translate(100%, 0);
+      -webkit-animation: box1 var(--duration) linear infinite;
+              animation: box1 var(--duration) linear infinite;
+    }
+    .boxes .box:nth-child(2) {
+      -webkit-transform: translate(0, 100%);
+              transform: translate(0, 100%);
+      -webkit-animation: box2 var(--duration) linear infinite;
+              animation: box2 var(--duration) linear infinite;
+    }
+    .boxes .box:nth-child(3) {
+      -webkit-transform: translate(100%, 100%);
+              transform: translate(100%, 100%);
+      -webkit-animation: box3 var(--duration) linear infinite;
+              animation: box3 var(--duration) linear infinite;
+    }
+    .boxes .box:nth-child(4) {
+      -webkit-transform: translate(200%, 0);
+              transform: translate(200%, 0);
+      -webkit-animation: box4 var(--duration) linear infinite;
+              animation: box4 var(--duration) linear infinite;
+    }
+    .boxes .box > div {
+      --background: #5C8DF6;
+      --top: auto;
+      --right: auto;
+      --bottom: auto;
+      --left: auto;
+      --translateZ: calc(var(--size) / 2);
+      --rotateY: 0deg;
+      --rotateX: 0deg;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--background);
+      top: var(--top);
+      right: var(--right);
+      bottom: var(--bottom);
+      left: var(--left);
+      -webkit-transform: rotateY(var(--rotateY)) rotateX(var(--rotateX)) translateZ(var(--translateZ));
+              transform: rotateY(var(--rotateY)) rotateX(var(--rotateX)) translateZ(var(--translateZ));
+    }
+    .boxes .box > div:nth-child(1) {
+      --top: 0;
+      --left: 0;
+    }
+    .boxes .box > div:nth-child(2) {
+      --background: #145af2;
+      --right: 0;
+      --rotateY: 90deg;
+    }
+    .boxes .box > div:nth-child(3) {
+      --background: #447cf5;
+      --rotateX: -90deg;
+    }
+    .boxes .box > div:nth-child(4) {
+      --background: #DBE3F4;
+      --top: 0;
+      --left: 0;
+      --translateZ: calc(var(--size) * 3 * -1);
+    }
+
+    @-webkit-keyframes box1 {
+      0%,
+        50% {
+        -webkit-transform: translate(100%, 0);
+                transform: translate(100%, 0);
+      }
+      100% {
+        -webkit-transform: translate(200%, 0);
+                transform: translate(200%, 0);
+      }
+    }
+
+    @keyframes box1 {
+      0%,
+        50% {
+        -webkit-transform: translate(100%, 0);
+                transform: translate(100%, 0);
+      }
+      100% {
+        -webkit-transform: translate(200%, 0);
+                transform: translate(200%, 0);
+      }
+    }
+    @-webkit-keyframes box2 {
+      0% {
+        -webkit-transform: translate(0, 100%);
+                transform: translate(0, 100%);
+      }
+      50% {
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+      }
+      100% {
+        -webkit-transform: translate(100%, 0);
+                transform: translate(100%, 0);
+      }
+    }
+    @keyframes box2 {
+      0% {
+        -webkit-transform: translate(0, 100%);
+                transform: translate(0, 100%);
+      }
+      50% {
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+      }
+      100% {
+        -webkit-transform: translate(100%, 0);
+                transform: translate(100%, 0);
+      }
+    }
+    @-webkit-keyframes box3 {
+      0%,
+        50% {
+        -webkit-transform: translate(100%, 100%);
+                transform: translate(100%, 100%);
+      }
+      100% {
+        -webkit-transform: translate(0, 100%);
+                transform: translate(0, 100%);
+      }
+    }
+    @keyframes box3 {
+      0%,
+        50% {
+        -webkit-transform: translate(100%, 100%);
+                transform: translate(100%, 100%);
+      }
+      100% {
+        -webkit-transform: translate(0, 100%);
+                transform: translate(0, 100%);
+      }
+    }
+    @-webkit-keyframes box4 {
+      0% {
+        -webkit-transform: translate(200%, 0);
+                transform: translate(200%, 0);
+      }
+      50% {
+        -webkit-transform: translate(200%, 100%);
+                transform: translate(200%, 100%);
+      }
+      100% {
+        -webkit-transform: translate(100%, 100%);
+                transform: translate(100%, 100%);
+      }
+    }
+    @keyframes box4 {
+      0% {
+        -webkit-transform: translate(200%, 0);
+                transform: translate(200%, 0);
+      }
+      50% {
+        -webkit-transform: translate(200%, 100%);
+                transform: translate(200%, 100%);
+      }
+      100% {
+        -webkit-transform: translate(100%, 100%);
+                transform: translate(100%, 100%);
+      }
+    }
+    html {
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+    *:before, *:after {
+      box-sizing: border-box;
+    }
+
+    .loader {
+      min-height: 100vh;
+      font-family: Roboto, Arial;
+      color: #ADAFB6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #F9FBFF;
+      z-index: 10000;
+    }
+
+    .background-image {
+      position: fixed;
+      left: -5%;
+      right: -5%;
+      z-index: -1;
+
+      display: block;
+      width: 110%;
+      height: 110%;
+
+
+      -webkit-filter: blur(15px);
+      -moz-filter: blur(15px);
+      -o-filter: blur(15px);
+      -ms-filter: blur(15px);
+      filter: blur(15px);
+    }
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="js/reconnecting-websocket.js"></script>
+  <script src="js/ios.js"></script>
+</head>
+
+<body onload="WebSocketTest();">
+  <div class="background-image"></div>
+  <div class="outer" style="display:none">
+    <div class="cover">
+      <div class="tools">
+        <button type="button" id="rotate" data-angle="0" class="rotate" onclick="Rotate();" title="Перевернуть"></button>
+        <button type="button" id="home" onclick="GoHome();" title="Домой"></button>
+        <button type="button" id="screenshot" title="Скриншот"></button>
+        <button type="button" id="exit" onclick="window.close();" title="Выход"></button>
+      </div>
+      <div class="device" style="vertical-align: middle">
+        <img id="img" class="picture" src="http://192.168.88.210:9100/"/>
+      </div>
+    </div>
+  </div>
+    <script type="text/javascript">
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
+      function openEditor() {
+        let url = 'draw.html';
+        $.get(url, function(body) {
+          newWindow = window.open();
+          newWindow.document.write("<style type='text/css'>body {margin: 0; font-size: 12px;} .active {background-color: #9BD1E5} button, button:active, button:focus {outline: none;}</style>");
+          newWindow.document.write("<div id='outer' style=' display: flex;flex-wrap: wrap; /* Optional. only if you want the items to wrap */justify-content: center; /* For horizontal alignment */align-items: center; /* For vertical alignment */'>");
+          newWindow.document.write("<div id='cover'>");
+          newWindow.document.write("<div id='tool' style='padding: 20px 0px;'>");
+          newWindow.document.write("<p class='error'><span style='color:#ff0000'></span></p>");
+          newWindow.document.write("<p class='colors'>Цвет: <button type='button' id='red' class='active'>Красный</button><button type='button' id='black'>Черный</button><button type='button' id='white'>Белый</button><button type='button' id='green'>Зеленый</button><button type='button' id='yellow'>Желтый</button></p>");
+          newWindow.document.write("<p class='sizes'>Размер: <button type='button' id='small'>Тонкий</button><button type='button' id='medium' class='active'>Средний</button><button type='button' id='big'>Толстый</button><button type='button' id='huge'>Капец какой толстый</button></p>");
+          newWindow.document.write("<button type='button' title='Очистить' id='clear'>Очистить</button><button type='button' title='Отправить на pix' id='send'>Отправить на pix</button>");
+          newWindow.document.write("</div>");
+          newWindow.document.write("<canvas style='box-shadow: 0 0 10px rgba(0,0,0,0.5);' id='canvasPic'></canvas>");
+          newWindow.document.write("<img style='display:none; max-width: 90%;' id='image' src='" + $('img#img').attr('src') + "'></img>");'src'
+          newWindow.document.write("</div>");
+          newWindow.document.write("</div>");
+          newWindow.document.write(body);
+        });
+      }
+
+      $('img#img').on('dragstart', function(event) { event.preventDefault(); });
+      
+      let picture = 'img/nature_' + getRandomInt(1, 10).toString() + '.jpg';
+
+      $('.background-image').css({
+        'background': 'url(' + picture + ') no-repeat',
+        'background-size': 'cover'
+      });
+
+      document.getElementById("screenshot").addEventListener("click" , openEditor);
+
+    </script>
+  <div class="loader">
+    <div class="boxes">
+      <div class="box">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <div class="box">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <div class="box">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <div class="box">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
